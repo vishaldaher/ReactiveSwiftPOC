@@ -18,44 +18,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RX1-Dd-03b">
-                                <rect key="frame" x="112.5" y="67" width="150" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="mbG-JJ-Dbh"/>
-                                </constraints>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vay-kn-XW5">
-                                <rect key="frame" x="112.5" y="115" width="150" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="Zhu-LB-s6d"/>
-                                </constraints>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BtR-Uq-3s3">
-                                <rect key="frame" x="162.5" y="159" width="49" height="30"/>
+                                <rect key="frame" x="147" y="159" width="80" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="jix-Lk-Eko"/>
+                                </constraints>
                                 <state key="normal" title="Submit"/>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="RX1-Dd-03b" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="47" id="KwV-Cl-f1A"/>
-                            <constraint firstItem="Vay-kn-XW5" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Q9p-xj-bTH"/>
+                            <constraint firstItem="BtR-Uq-3s3" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="139" id="PXr-DY-gfl"/>
                             <constraint firstItem="BtR-Uq-3s3" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="kTk-ea-krJ"/>
-                            <constraint firstItem="RX1-Dd-03b" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="mAj-nU-5nn"/>
-                            <constraint firstItem="Vay-kn-XW5" firstAttribute="top" secondItem="RX1-Dd-03b" secondAttribute="bottom" constant="18" id="psU-zs-VaZ"/>
-                            <constraint firstItem="BtR-Uq-3s3" firstAttribute="top" secondItem="Vay-kn-XW5" secondAttribute="bottom" constant="14" id="x3t-Tl-QYl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="btnSubmit" destination="BtR-Uq-3s3" id="ZlJ-L5-r9f"/>
-                        <outlet property="tfOne" destination="RX1-Dd-03b" id="EI6-bO-fJQ"/>
-                        <outlet property="tfTwo" destination="Vay-kn-XW5" id="1H1-dK-xi2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

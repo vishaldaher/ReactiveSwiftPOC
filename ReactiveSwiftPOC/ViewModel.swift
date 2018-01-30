@@ -2,40 +2,32 @@ import UIKit
 import ReactiveSwift
 import Result
 
-class ViewModel: NSObject {
+struct FormError: Error {
+    let reason: String
+    static let invalidText = FormError(reason: "Invalid text")
+}
 
-    struct FormError: Error {
-        let reason: String
-        static let invalidText = FormError(reason: "Invalid text")
-    }
-    
+class ViewModel: NSObject {
     var placeholderStringOne = "Text one"
     var placeholderStringTwo = "Text two"
 
-    var textOne: ValidatingProperty<String?, FormError>
-    var textTwo: ValidatingProperty<String?, FormError>
     var validation: Property<String?>
-    let submit: Action<(), Bool, FormError>
+    let submit: Action<(), (), FormError>
 
+    var textOne = MutableProperty(false)
+    var textTwo = MutableProperty(false)
+    
     override init() {
         
-        textOne = ValidatingProperty("") { input in
-            return  (input?.count)! > 0 ? .valid : .invalid(.invalidText)
-        }
-        
-        textTwo = ValidatingProperty("") { input in
-            return  (input?.count)! > 0 ? .valid : .invalid(.invalidText)
-        }
-        
         validation = Property
-            .combineLatest(textOne.result,textTwo.result)
+            .combineLatest(textOne,textTwo)
             .map {(arg) -> String? in
-                let (textOne1, textTwo2) = arg
-                return !textOne1.isInvalid && !textTwo2.isInvalid ? "valid" : nil}
+                let (textOne, textTwo) = arg
+                return textOne && textTwo ? "valid" : nil}
         
         submit = Action(unwrapping: validation) { (_: String) in
             let (_, _) = Signal<String, FormError>.pipe()
-            return SignalProducer<Bool, FormError> {
+            return SignalProducer<(), FormError> {
                 observer, disposable in
                 observer.sendCompleted()
             }

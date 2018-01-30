@@ -4,11 +4,12 @@ import ReactiveCocoa
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var tfOne: UITextField!
-    @IBOutlet weak var tfTwo: UITextField!
     @IBOutlet weak var btnSubmit: UIButton!
     
-    var viewModel : ViewModel!
+    var textFieldOne: CustomTextField!
+    var textFieldTwo: CustomTextField!
+    
+    var viewModel: ViewModel!
     var activityIndicatorView: ActivityIndicatorView!
     
     override func viewDidLoad() {
@@ -23,18 +24,17 @@ class ViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         //This will initialize view model class while creating object of view controller
-        viewModel = ViewModel()
+        viewModel = ViewModel()        
     }
     
     func btnSubmitClicked() {
-            let frame = CGRect(x: (view.frame.width - 50)/2, y: (view.frame.height - 50)/2, width: 50, height: 50)
-            activityIndicatorView = ActivityIndicatorView(frame: frame)
-            activityIndicatorView.activityIndicator.startAnimating()
-            view.addSubview(activityIndicatorView)
-            
-            //Timer to stop animating activity indicator
-            Timer.scheduledTimer(withTimeInterval: TimeInterval(1.0), repeats: false) { (_) in
-                self.stopAnimatingActivityIndicator()
+        activityIndicatorView = ActivityIndicatorView(frame: view.frame)
+        activityIndicatorView.activityIndicator.startAnimating()
+        view.addSubview(activityIndicatorView)
+        
+        //Timer to stop animating activity indicator
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(1.0), repeats: false) { (_) in
+            self.stopAnimatingActivityIndicator()
         }
     }
     
@@ -48,17 +48,21 @@ class ViewController: UIViewController {
 
     func initialize()
     {
-        tfOne.placeholder = viewModel.placeholderStringOne
-        
-        tfTwo.placeholder = viewModel.placeholderStringTwo
-        
         btnSubmit.isEnabled = false
+
+        let frameOne = CGRect(x: (view.frame.width - 200)/2, y: 50, width: 200, height: 30)
+        textFieldOne = CustomTextField(frame: frameOne)
+        textFieldOne.placeholder = viewModel.placeholderStringOne
         
-        viewModel.textOne <~ tfOne.reactive.continuousTextValues
-            .map { $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
+        let frameTwo = CGRect(x: (view.frame.width - 200)/2, y: 100, width: 200, height: 30)
+        textFieldTwo = CustomTextField(frame: frameTwo)
+        textFieldTwo.placeholder = viewModel.placeholderStringTwo
         
-        viewModel.textTwo <~ tfTwo.reactive.continuousTextValues
-            .map { $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
+        view.addSubview(textFieldOne)
+        view.addSubview(textFieldTwo)
+        
+        viewModel.textOne <~ textFieldOne.customTextFieldViewModel.isTextValid
+        viewModel.textTwo <~ textFieldTwo.customTextFieldViewModel.isTextValid
         
         btnSubmit.reactive.pressed = CocoaAction(viewModel.submit)
         
@@ -66,20 +70,6 @@ class ViewController: UIViewController {
             self.btnSubmitClicked()
         }
         
-        viewModel.textOne.result.signal.observeValues {
-            if !$0.isInvalid {
-                let attributedString = NSAttributedString(string: self.tfOne.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
-                self.tfOne.attributedText = attributedString
-            }
-        }
-
-        viewModel.textTwo.result.signal.observeValues {
-            if !$0.isInvalid {
-                let attributedString = NSAttributedString(string: self.tfTwo.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
-                self.tfTwo.attributedText = attributedString
-            }
-        }
-
         viewModel.validation.signal.observeValues {
             if $0 == "valid" {
                 self.btnSubmit.isEnabled = true
