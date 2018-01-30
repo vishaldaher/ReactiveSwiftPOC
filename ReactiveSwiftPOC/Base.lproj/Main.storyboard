@@ -36,7 +36,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BtR-Uq-3s3">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BtR-Uq-3s3">
                                 <rect key="frame" x="162.5" y="159" width="49" height="30"/>
                                 <state key="normal" title="Submit"/>
                             </button>
@@ -54,7 +54,7 @@
                     </view>
                     <connections>
                         <outlet property="btnSubmit" destination="BtR-Uq-3s3" id="ZlJ-L5-r9f"/>
-                        <outlet property="tfOne" destination="RX1-Dd-03b" id="WuU-Nt-pGS"/>
+                        <outlet property="tfOne" destination="RX1-Dd-03b" id="EI6-bO-fJQ"/>
                         <outlet property="tfTwo" destination="Vay-kn-XW5" id="1H1-dK-xi2"/>
                     </connections>
                 </viewController>

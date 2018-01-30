@@ -1,4 +1,6 @@
 import UIKit
+import ReactiveSwift
+import ReactiveCocoa
 
 class ViewController: UIViewController {
 
@@ -8,7 +10,6 @@ class ViewController: UIViewController {
     
     var viewModel : ViewModel!
     var activityIndicatorView: ActivityIndicatorView!
-    var dataModel: DataModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,25 +23,10 @@ class ViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         //This will initialize view model class while creating object of view controller
-        viewModel = ViewModel(rootViewController: self)
+        viewModel = ViewModel()
     }
     
-    //MARK: Selector methods
-    @objc func tfOneChanged(textField : UITextField) {
-        dataModel.textOne = textField.text
-        viewModel.textChanged(dataModel: dataModel)
-        updateSubmitButton()
-    }
-
-    @objc func tfTwoChanged(textField : UITextField) {
-        dataModel.textTwo = textField.text
-        viewModel.textChanged(dataModel: dataModel)
-        updateSubmitButton()
-    }
-
-    //MARK: Button click event
-    @objc func btnSubmitClicked(button : UIButton) {
-        if viewModel.showActivityIndicator {
+    func btnSubmitClicked() {
             let frame = CGRect(x: (view.frame.width - 50)/2, y: (view.frame.height - 50)/2, width: 50, height: 50)
             activityIndicatorView = ActivityIndicatorView(frame: frame)
             activityIndicatorView.activityIndicator.startAnimating()
@@ -49,7 +35,6 @@ class ViewController: UIViewController {
             //Timer to stop animating activity indicator
             Timer.scheduledTimer(withTimeInterval: TimeInterval(1.0), repeats: false) { (_) in
                 self.stopAnimatingActivityIndicator()
-            }
         }
     }
     
@@ -61,21 +46,48 @@ class ViewController: UIViewController {
         }
     }
 
-    func updateSubmitButton() {
-        btnSubmit.isEnabled = viewModel.enableSubmitButton
-    }
-    
     func initialize()
     {
-        // handle text changes
-        tfOne.addTarget(self, action: #selector(self.tfOneChanged), for: UIControlEvents.editingChanged)
-        tfTwo.addTarget(self, action: #selector(self.tfTwoChanged), for: UIControlEvents.editingChanged)
+        tfOne.placeholder = viewModel.placeholderStringOne
+        
+        tfTwo.placeholder = viewModel.placeholderStringTwo
+        
+        btnSubmit.isEnabled = false
+        
+        viewModel.textOne <~ tfOne.reactive.continuousTextValues
+            .map { $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
+        
+        viewModel.textTwo <~ tfTwo.reactive.continuousTextValues
+            .map { $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
+        
+        btnSubmit.reactive.pressed = CocoaAction(viewModel.submit)
+        
+        viewModel.submit.completed.observeValues {
+            self.btnSubmitClicked()
+        }
+        
+        viewModel.textOne.result.signal.observeValues {
+            if !$0.isInvalid {
+                let attributedString = NSAttributedString(string: self.tfOne.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
+                self.tfOne.attributedText = attributedString
+            }
+        }
 
-        //handle button click
-        btnSubmit.addTarget(self, action: #selector(self.btnSubmitClicked), for: UIControlEvents.touchUpInside)
+        viewModel.textTwo.result.signal.observeValues {
+            if !$0.isInvalid {
+                let attributedString = NSAttributedString(string: self.tfTwo.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
+                self.tfTwo.attributedText = attributedString
+            }
+        }
 
-        dataModel = DataModel()
-        btnSubmit.isEnabled = viewModel.enableSubmitButton
+        viewModel.validation.signal.observeValues {
+            if $0 == "valid" {
+                self.btnSubmit.isEnabled = true
+            }
+            else {
+                self.btnSubmit.isEnabled = false
+            }
+        }
     }
 }
 

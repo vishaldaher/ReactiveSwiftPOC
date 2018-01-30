@@ -4,5 +4,6 @@ use_frameworks!
 target 'ReactiveSwiftPOC' do
 
 pod 'ReactiveSwift', '~> 3.0'
+pod 'ReactiveCocoa', '~> 7.0'
 
 end
