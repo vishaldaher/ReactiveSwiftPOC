@@ -1,0 +1,6 @@
+framework module Pods_ReactiveSwiftPOCTests {
+  umbrella header "Pods-ReactiveSwiftPOCTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

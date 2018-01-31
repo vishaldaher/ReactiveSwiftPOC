@@ -1,19 +1,18 @@
-//
-//  ReactiveSwiftPOCTests.swift
-//  ReactiveSwiftPOCTests
-//
-//  Created by Vishal D Aher on 29/01/18.
-//  Copyright © 2018 SpringCT. All rights reserved.
-//
-
 import XCTest
 @testable import ReactiveSwiftPOC
+import ReactiveSwift
 
 class ReactiveSwiftPOCTests: XCTestCase {
+    
+    var viewModel: ViewModel!
+    var tfOne: CustomTextField!
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        viewModel = ViewModel()
+        tfOne = CustomTextField(frame: CGRect.zero)
+        viewModel.textOne <~ tfOne.customTextFieldViewModel.isTextValid
     }
     
     override func tearDown() {
@@ -21,11 +20,27 @@ class ReactiveSwiftPOCTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testTextFieldContainsNoText() {
+        XCTAssertFalse(viewModel.textOne.value)
+        
+        tfOne.insertText(" ")
+        XCTAssertFalse(viewModel.textOne.value)
+
+        tfOne.insertText("")
+        XCTAssertFalse(viewModel.textOne.value)
     }
-    
+
+    func testFieldContainsText() {
+        tfOne.insertText(" T")
+        XCTAssertTrue(viewModel.textOne.value)
+
+        tfOne.insertText("T")
+        XCTAssertTrue(viewModel.textOne.value)
+
+        tfOne.insertText("Text")
+        XCTAssertTrue(viewModel.textOne.value)
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {

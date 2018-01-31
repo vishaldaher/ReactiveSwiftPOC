@@ -15,6 +15,7 @@ class CustomTextField: UITextField {
         
         customTextFieldViewModel = CustomTextFieldViewModel()
         customTextFieldViewModel.textOne <~ self.reactive.continuousTextValues
+            .map{ $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
         customTextFieldViewModel.textOne.result.signal.observeValues {
             if !$0.isInvalid {
                 let attributedString = NSAttributedString(string: self.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
