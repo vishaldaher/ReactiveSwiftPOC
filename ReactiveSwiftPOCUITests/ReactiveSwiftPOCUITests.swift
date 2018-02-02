@@ -67,6 +67,39 @@ class ReactiveSwiftPOCUITests: XCTestCase {
         
         XCTAssertFalse(btnSubmit.isEnabled)
     }
+    
+    func testTextOneLength() {
+        textOneTextField.tap()
+        textOneTextField.typeText("ABCD")
+        textOneTextField.clearText()
+        textOneTextField.typeText("AB")
+        textOneTextField.clearText()
+        textOneTextField.typeText(" ABC")
+    }
+    
+    func testUIElementInteraction() {
+        textOneTextField.tap()
+        textOneTextField.typeText("AB")
+        textTwoTextField.tap()
+        textTwoTextField.typeText("WXYZ")
+        app.buttons["Submit"].tap()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+            XCTAssertFalse(self.textOneTextField.isEnabled)
+            XCTAssertFalse(self.textTwoTextField.isEnabled)
+            XCTAssertFalse(self.btnSubmit.isEnabled)
+        })
+    }
+    
+    func testButtonTextChangeOnTap() {
+        textOneTextField.tap()
+        textOneTextField.typeText("AB")
+        textTwoTextField.tap()
+        textTwoTextField.typeText("WXYZ")
+        app.buttons["Submit"].tap()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3), execute: {
+            XCTAssertTrue(self.app.buttons["Submit"].title == "Done")
+        })
+    }
 }
 
 //Extenstion to clear text.

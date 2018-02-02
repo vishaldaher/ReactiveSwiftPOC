@@ -12,6 +12,8 @@ class ViewController: UIViewController {
     var viewModel: ViewModel!
     var activityIndicatorView: ActivityIndicatorView!
     
+    var returnString:String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
@@ -31,10 +33,14 @@ class ViewController: UIViewController {
         activityIndicatorView = ActivityIndicatorView(frame: view.frame)
         activityIndicatorView.activityIndicator.startAnimating()
         view.addSubview(activityIndicatorView)
+        textFieldOne.isEnabled = false
+        textFieldTwo.isEnabled = false
+        btnSubmit.isEnabled = false
         
         //Timer to stop animating activity indicator
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(1.0), repeats: false) { (_) in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(3.0), repeats: false) { (_) in
             self.stopAnimatingActivityIndicator()
+            self.btnSubmit.setTitle(self.returnString, for: .normal)
         }
     }
     
@@ -43,6 +49,9 @@ class ViewController: UIViewController {
         if activityIndicatorView != nil {
             activityIndicatorView.activityIndicator.stopAnimating()
             activityIndicatorView.removeFromSuperview()
+            textFieldOne.isEnabled = true
+            textFieldTwo.isEnabled = true
+            btnSubmit.isEnabled = true
         }
     }
 
@@ -66,11 +75,24 @@ class ViewController: UIViewController {
         
         btnSubmit.reactive.pressed = CocoaAction(viewModel.submit)
         
+        textFieldOne.customTextFieldViewModel.isTextValid.signal.observeValues {
+            if $0 > 3 {
+                self.textFieldOne.text =  String(describing: self.textFieldOne.text!.prefix(3))
+            }
+        }
+        
         viewModel.submit.completed.observeValues {
             self.btnSubmitClicked()
         }
         
+        self.viewModel.submit.values.observeValues {
+            if !$0.isEmpty {
+                 self.returnString = $0
+            }
+        }
+        
         viewModel.validation.signal.observeValues {
+            self.btnSubmit.setTitle("Submit", for: .normal)
             if $0 == "valid" {
                 self.btnSubmit.isEnabled = true
             }

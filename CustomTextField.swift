@@ -20,11 +20,11 @@ class CustomTextField: UITextField {
             if !$0.isInvalid {
                 let attributedString = NSAttributedString(string: self.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
                 self.attributedText = attributedString
-                self.customTextFieldViewModel.isTextValid.value = true
+                self.customTextFieldViewModel.isTextValid.value = ($0.value??.count)!
             }
             else
             {
-                self.customTextFieldViewModel.isTextValid.value = false
+                self.customTextFieldViewModel.isTextValid.value = 0
             }
         }
     }

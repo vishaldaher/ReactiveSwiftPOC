@@ -12,23 +12,27 @@ class ViewModel: NSObject {
     var placeholderStringTwo = "Text two"
 
     var validation: Property<String?>
-    let submit: Action<(), (), FormError>
 
-    var textOne = MutableProperty(false)
-    var textTwo = MutableProperty(false)
+    let submit: Action<(), String, FormError>
+
+    var textOne = MutableProperty(0)
+    var textTwo = MutableProperty(0)
     
+    var textOne1 = MutableProperty("")
+    var textTwo2 = MutableProperty("")
     override init() {
         
         validation = Property
             .combineLatest(textOne,textTwo)
             .map {(arg) -> String? in
                 let (textOne, textTwo) = arg
-                return textOne && textTwo ? "valid" : nil}
+                return textOne != 0 && textTwo != 0 ? "valid" : nil}
         
         submit = Action(unwrapping: validation) { (_: String) in
             let (_, _) = Signal<String, FormError>.pipe()
-            return SignalProducer<(), FormError> {
+            return SignalProducer<String, FormError> {
                 observer, disposable in
+                observer.send(value: "Done")
                 observer.sendCompleted()
             }
         }

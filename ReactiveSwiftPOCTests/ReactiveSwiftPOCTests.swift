@@ -21,26 +21,26 @@ class ReactiveSwiftPOCTests: XCTestCase {
     }
     
     func testTextFieldContainsNoText() {
-        XCTAssertFalse(viewModel.textOne.value)
+        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
         
         tfOne.insertText(" ")
-        XCTAssertFalse(viewModel.textOne.value)
+        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
 
         tfOne.insertText("")
-        XCTAssertFalse(viewModel.textOne.value)
+        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
     }
 
     func testFieldContainsText() {
         tfOne.insertText(" T")
-        XCTAssertTrue(viewModel.textOne.value)
+        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
 
         tfOne.insertText("T")
-        XCTAssertTrue(viewModel.textOne.value)
+        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
 
         tfOne.insertText("Text")
-        XCTAssertTrue(viewModel.textOne.value)
+        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
     }
-
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
