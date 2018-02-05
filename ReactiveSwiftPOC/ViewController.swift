@@ -9,7 +9,7 @@ class ViewController: UIViewController {
     var textFieldOne: CustomTextField!
     var textFieldTwo: CustomTextField!
     
-    var viewModel: ViewModel!
+    var viewModel: ViewModelType!
     var activityIndicatorView: ActivityIndicatorView!
     
     var returnString:String?
@@ -26,16 +26,17 @@ class ViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         //This will initialize view model class while creating object of view controller
-        viewModel = ViewModel()        
+        viewModel = ViewModel()
     }
     
     func btnSubmitClicked() {
         activityIndicatorView = ActivityIndicatorView(frame: view.frame)
         activityIndicatorView.activityIndicator.startAnimating()
         view.addSubview(activityIndicatorView)
-        textFieldOne.isEnabled = false
-        textFieldTwo.isEnabled = false
-        btnSubmit.isEnabled = false
+        btnSubmit.reactive.isEnabled <~ viewModel.input.submit.isExecuting
+//        textFieldOne.textField.isEnabled = false
+//        textFieldTwo.textField.isEnabled = false
+//        btnSubmit.isEnabled = false
         
         //Timer to stop animating activity indicator
         Timer.scheduledTimer(withTimeInterval: TimeInterval(3.0), repeats: false) { (_) in
@@ -49,9 +50,9 @@ class ViewController: UIViewController {
         if activityIndicatorView != nil {
             activityIndicatorView.activityIndicator.stopAnimating()
             activityIndicatorView.removeFromSuperview()
-            textFieldOne.isEnabled = true
-            textFieldTwo.isEnabled = true
-            btnSubmit.isEnabled = true
+//            textFieldOne.textField.isEnabled = true
+//            textFieldTwo.textField.isEnabled = true
+//            btnSubmit.isEnabled = true
         }
     }
 
@@ -61,37 +62,48 @@ class ViewController: UIViewController {
 
         let frameOne = CGRect(x: (view.frame.width - 200)/2, y: 50, width: 200, height: 30)
         textFieldOne = CustomTextField(frame: frameOne)
-        textFieldOne.placeholder = viewModel.placeholderStringOne
+        textFieldOne.textField.placeholder = viewModel.input.placeholderStringOne
         
         let frameTwo = CGRect(x: (view.frame.width - 200)/2, y: 100, width: 200, height: 30)
         textFieldTwo = CustomTextField(frame: frameTwo)
-        textFieldTwo.placeholder = viewModel.placeholderStringTwo
+        textFieldTwo.textField.placeholder = viewModel.input.placeholderStringTwo
         
         view.addSubview(textFieldOne)
         view.addSubview(textFieldTwo)
         
-        viewModel.textOne <~ textFieldOne.customTextFieldViewModel.isTextValid
-        viewModel.textTwo <~ textFieldTwo.customTextFieldViewModel.isTextValid
+        viewModel.input.textOne <~ textFieldOne.customTextFieldViewModel.input.isTextValid
+        viewModel.input.textTwo <~ textFieldTwo.customTextFieldViewModel.input.isTextValid
         
-        btnSubmit.reactive.pressed = CocoaAction(viewModel.submit)
+        btnSubmit.reactive.pressed = CocoaAction(viewModel.input.submit)
+//        btnSubmit.reactive.pressed = CocoaAction(viewModel.input.showHideActivityIndicatorSignal)
         
-        textFieldOne.customTextFieldViewModel.isTextValid.signal.observeValues {
+        self.textFieldOne.reactive.isUserInteractionEnabled <~ viewModel.input.submit.isExecuting.map({ (value) -> Bool in
+            return !value
+        })
+        self.textFieldTwo.reactive.isUserInteractionEnabled <~ viewModel.input.submit.isExecuting.map({ (value) -> Bool in
+            return !value
+        })
+        
+        textFieldOne.customTextFieldViewModel.input.isTextValid.signal.observeValues {
             if $0 > 3 {
-                self.textFieldOne.text =  String(describing: self.textFieldOne.text!.prefix(3))
+                self.textFieldOne.textField.text =  String(describing: self.textFieldOne.textField.text!.prefix(3))
             }
         }
         
-        viewModel.submit.completed.observeValues {
-            self.btnSubmitClicked()
+        viewModel.input.submit.completed.observeValues {
+            DispatchQueue.main.async {
+                    self.btnSubmitClicked()
+            }
+            
         }
         
-        self.viewModel.submit.values.observeValues {
-            if !$0.isEmpty {
+        self.viewModel.input.submit.values.observeValues {
+                if !$0.isEmpty {
                  self.returnString = $0
             }
         }
-        
-        viewModel.validation.signal.observeValues {
+                
+        viewModel.output.validation.signal.observeValues {
             self.btnSubmit.setTitle("Submit", for: .normal)
             if $0 == "valid" {
                 self.btnSubmit.isEnabled = true

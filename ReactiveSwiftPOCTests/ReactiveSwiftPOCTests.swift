@@ -4,7 +4,7 @@ import ReactiveSwift
 
 class ReactiveSwiftPOCTests: XCTestCase {
     
-    var viewModel: ViewModel!
+    var viewModel: ViewModelType!
     var tfOne: CustomTextField!
     
     override func setUp() {

@@ -2,15 +2,57 @@ import UIKit
 import ReactiveSwift
 import Result
 
+protocol ViewModelInput {
+    var textOne: MutableProperty<Int> { get }
+    var textTwo: MutableProperty<Int> { get }
+    var isControlEnabled: MutableProperty<Bool> { get }
+    var submit: Action<(), String, FormError> { get }
+//    var showHideActivityIndicatorSignal: Action<(), String, FormError> { get }
+    var placeholderStringOne: String { get }
+    var placeholderStringTwo: String { get }
+}
+
+protocol ViewModelOutput {
+    var validation: Property<String?> { get }
+//    var showHideActivityIndicatorSignal: Property<Bool> { get }
+}
+
+protocol ViewModelType {
+    var input: ViewModelInput { get }
+    var output: ViewModelOutput { get }
+}
+
 struct FormError: Error {
     let reason: String
     static let invalidText = FormError(reason: "Invalid text")
 }
 
-class ViewModel: NSObject {
-    var placeholderStringOne = "Text one"
-    var placeholderStringTwo = "Text two"
-
+class ViewModel: NSObject, ViewModelType, ViewModelInput, ViewModelOutput {
+    
+    var isControlEnabled: MutableProperty<Bool>
+    
+//    var showHideActivityIndicatorSignal: Action<(), String, FormError>
+    
+    var signal: Signal<Bool, NoError>!
+    
+    
+    var placeholderStringOne: String {
+        return "Text one"
+    }
+    
+    var placeholderStringTwo: String {
+        return "Text two"
+    }
+    
+    
+    var input: ViewModelInput {
+        return self
+    }
+    
+    var output: ViewModelOutput {
+        return self
+    }
+    
     var validation: Property<String?>
 
     let submit: Action<(), String, FormError>
@@ -18,9 +60,9 @@ class ViewModel: NSObject {
     var textOne = MutableProperty(0)
     var textTwo = MutableProperty(0)
     
-    var textOne1 = MutableProperty("")
-    var textTwo2 = MutableProperty("")
     override init() {
+        
+        isControlEnabled = MutableProperty(true)
         
         validation = Property
             .combineLatest(textOne,textTwo)
@@ -34,7 +76,16 @@ class ViewModel: NSObject {
                 observer, disposable in
                 observer.send(value: "Done")
                 observer.sendCompleted()
-            }
+                }
         }
+
+//        showHideActivityIndicatorSignal = Action(unwrapping: validation) { (_: String) in
+//            let (_, _) = Signal<String, FormError>.pipe()
+//            return SignalProducer<String, FormError> {
+//                observer, disposable in
+//                observer.send(value: "Done")
+//                observer.sendCompleted()
+//            }.delay(TimeInterval(3), on: QueueScheduler.init(qos: DispatchQoS.userInteractive, name: "ABC", targeting: nil))
+//        }
     }
 }
