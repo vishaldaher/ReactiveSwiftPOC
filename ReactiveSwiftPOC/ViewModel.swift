@@ -7,14 +7,12 @@ protocol ViewModelInput {
     var textTwo: MutableProperty<Int> { get }
     var isControlEnabled: MutableProperty<Bool> { get }
     var submit: Action<(), String, FormError> { get }
-//    var showHideActivityIndicatorSignal: Action<(), String, FormError> { get }
     var placeholderStringOne: String { get }
     var placeholderStringTwo: String { get }
 }
 
 protocol ViewModelOutput {
     var validation: Property<String?> { get }
-//    var showHideActivityIndicatorSignal: Property<Bool> { get }
 }
 
 protocol ViewModelType {
@@ -31,10 +29,7 @@ class ViewModel: NSObject, ViewModelType, ViewModelInput, ViewModelOutput {
     
     var isControlEnabled: MutableProperty<Bool>
     
-//    var showHideActivityIndicatorSignal: Action<(), String, FormError>
-    
     var signal: Signal<Bool, NoError>!
-    
     
     var placeholderStringOne: String {
         return "Text one"
@@ -43,7 +38,6 @@ class ViewModel: NSObject, ViewModelType, ViewModelInput, ViewModelOutput {
     var placeholderStringTwo: String {
         return "Text two"
     }
-    
     
     var input: ViewModelInput {
         return self
@@ -54,9 +48,7 @@ class ViewModel: NSObject, ViewModelType, ViewModelInput, ViewModelOutput {
     }
     
     var validation: Property<String?>
-
     let submit: Action<(), String, FormError>
-
     var textOne = MutableProperty(0)
     var textTwo = MutableProperty(0)
     
@@ -74,18 +66,11 @@ class ViewModel: NSObject, ViewModelType, ViewModelInput, ViewModelOutput {
             let (_, _) = Signal<String, FormError>.pipe()
             return SignalProducer<String, FormError> {
                 observer, disposable in
-                observer.send(value: "Done")
-                observer.sendCompleted()
-                }
+                observer.send(value: "Done")                
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+                    observer.sendCompleted()
+                })
+            }
         }
-
-//        showHideActivityIndicatorSignal = Action(unwrapping: validation) { (_: String) in
-//            let (_, _) = Signal<String, FormError>.pipe()
-//            return SignalProducer<String, FormError> {
-//                observer, disposable in
-//                observer.send(value: "Done")
-//                observer.sendCompleted()
-//            }.delay(TimeInterval(3), on: QueueScheduler.init(qos: DispatchQoS.userInteractive, name: "ABC", targeting: nil))
-//        }
     }
 }

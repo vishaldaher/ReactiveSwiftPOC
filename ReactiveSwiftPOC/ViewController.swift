@@ -29,30 +29,17 @@ class ViewController: UIViewController {
         viewModel = ViewModel()
     }
     
-    func btnSubmitClicked() {
+    //MARK: General Method
+    func showAndStartAnimatingActivityIndicator() {
         activityIndicatorView = ActivityIndicatorView(frame: view.frame)
         activityIndicatorView.activityIndicator.startAnimating()
         view.addSubview(activityIndicatorView)
-        btnSubmit.reactive.isEnabled <~ viewModel.input.submit.isExecuting
-//        textFieldOne.textField.isEnabled = false
-//        textFieldTwo.textField.isEnabled = false
-//        btnSubmit.isEnabled = false
-        
-        //Timer to stop animating activity indicator
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(3.0), repeats: false) { (_) in
-            self.stopAnimatingActivityIndicator()
-            self.btnSubmit.setTitle(self.returnString, for: .normal)
-        }
     }
     
-    //MARK: General Method
-    func stopAnimatingActivityIndicator() {
+    func hideAndstopAnimatingActivityIndicator() {
         if activityIndicatorView != nil {
             activityIndicatorView.activityIndicator.stopAnimating()
             activityIndicatorView.removeFromSuperview()
-//            textFieldOne.textField.isEnabled = true
-//            textFieldTwo.textField.isEnabled = true
-//            btnSubmit.isEnabled = true
         }
     }
 
@@ -73,28 +60,37 @@ class ViewController: UIViewController {
         
         viewModel.input.textOne <~ textFieldOne.customTextFieldViewModel.input.isTextValid
         viewModel.input.textTwo <~ textFieldTwo.customTextFieldViewModel.input.isTextValid
-        
-        btnSubmit.reactive.pressed = CocoaAction(viewModel.input.submit)
-//        btnSubmit.reactive.pressed = CocoaAction(viewModel.input.showHideActivityIndicatorSignal)
-        
         self.textFieldOne.reactive.isUserInteractionEnabled <~ viewModel.input.submit.isExecuting.map({ (value) -> Bool in
             return !value
         })
         self.textFieldTwo.reactive.isUserInteractionEnabled <~ viewModel.input.submit.isExecuting.map({ (value) -> Bool in
             return !value
         })
+
+        btnSubmit.reactive.pressed = CocoaAction(viewModel.input.submit)
         
         textFieldOne.customTextFieldViewModel.input.isTextValid.signal.observeValues {
+            if $0 == 0 {
+                self.textFieldOne.textField.text = ""
+            }
             if $0 > 3 {
                 self.textFieldOne.textField.text =  String(describing: self.textFieldOne.textField.text!.prefix(3))
             }
         }
         
-        viewModel.input.submit.completed.observeValues {
-            DispatchQueue.main.async {
-                    self.btnSubmitClicked()
-            }
+        viewModel.input.submit.isExecuting.signal.observeValues {
             
+            self.btnSubmit.reactive.isEnabled <~ self.viewModel.input.submit.isExecuting.map({ (value) -> Bool in
+                return !value
+            })
+
+            if $0 {
+                self.showAndStartAnimatingActivityIndicator()
+            }
+            else {
+                self.hideAndstopAnimatingActivityIndicator()
+                self.btnSubmit.setTitle(self.returnString, for: .normal)
+            }
         }
         
         self.viewModel.input.submit.values.observeValues {
@@ -103,14 +99,8 @@ class ViewController: UIViewController {
             }
         }
                 
-        viewModel.output.validation.signal.observeValues {
+        viewModel.output.validation.signal.observeValues { _ in
             self.btnSubmit.setTitle("Submit", for: .normal)
-            if $0 == "valid" {
-                self.btnSubmit.isEnabled = true
-            }
-            else {
-                self.btnSubmit.isEnabled = false
-            }
         }
     }
 }

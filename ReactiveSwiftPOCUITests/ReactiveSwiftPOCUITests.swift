@@ -71,10 +71,13 @@ class ReactiveSwiftPOCUITests: XCTestCase {
     func testTextOneLength() {
         textOneTextField.tap()
         textOneTextField.typeText("ABCD")
+        XCTAssertTrue((textOneTextField.value as! String).count <= 3)
         textOneTextField.clearText()
         textOneTextField.typeText("AB")
+        XCTAssertTrue((textOneTextField.value as! String).count <= 3)
         textOneTextField.clearText()
         textOneTextField.typeText(" ABC")
+        XCTAssertTrue((textOneTextField.value as! String).count <= 3)
     }
     
     func testUIElementInteraction() {

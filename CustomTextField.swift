@@ -24,7 +24,7 @@ class CustomTextField: UIView {
             .map{ $0!.trimmingCharacters(in: .whitespacesAndNewlines) }
         customTextFieldViewModel.output.textOne.result.signal.observeValues {
             if !$0.isInvalid {
-                let attributedString = NSAttributedString(string: self.textField.text!, attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
+                let attributedString = NSAttributedString(string: (self.textField.text!), attributes: [NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
                 self.textField.attributedText = attributedString
                 self.customTextFieldViewModel.input.isTextValid.value = ($0.value??.count)!
             }

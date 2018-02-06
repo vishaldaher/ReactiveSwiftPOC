@@ -12,7 +12,7 @@ class ReactiveSwiftPOCTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         viewModel = ViewModel()
         tfOne = CustomTextField(frame: CGRect.zero)
-        viewModel.textOne <~ tfOne.customTextFieldViewModel.isTextValid
+        viewModel.input.textOne <~ tfOne.customTextFieldViewModel.input.isTextValid
     }
     
     override func tearDown() {
@@ -21,24 +21,24 @@ class ReactiveSwiftPOCTests: XCTestCase {
     }
     
     func testTextFieldContainsNoText() {
-        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
+        XCTAssertFalse(viewModel.input.textOne.value != 0 ? true : false)
         
-        tfOne.insertText(" ")
-        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
+        tfOne.textField.insertText(" ")
+        XCTAssertFalse(viewModel.input.textOne.value != 0 ? true : false)
 
-        tfOne.insertText("")
-        XCTAssertFalse(viewModel.textOne.value != 0 ? true : false)
+        tfOne.textField.insertText("")
+        XCTAssertFalse(viewModel.input.textOne.value != 0 ? true : false)
     }
 
     func testFieldContainsText() {
-        tfOne.insertText(" T")
-        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
+        tfOne.textField.insertText(" T")
+        XCTAssertTrue(viewModel.input.textOne.value != 0 ? true : false)
 
-        tfOne.insertText("T")
-        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
+        tfOne.textField.insertText("T")
+        XCTAssertTrue(viewModel.input.textOne.value != 0 ? true : false)
 
-        tfOne.insertText("Text")
-        XCTAssertTrue(viewModel.textOne.value != 0 ? true : false)
+        tfOne.textField.insertText("Text")
+        XCTAssertTrue(viewModel.input.textOne.value != 0 ? true : false)
     }
     
     func testPerformanceExample() {
