@@ -3,8 +3,8 @@ platform :ios, '12.0'
 use_frameworks!
 
 def shared_pods
-    pod 'ReactiveSwift',
-    pod 'ReactiveCocoa',
+    pod 'ReactiveSwift'
+    pod 'ReactiveCocoa'
 end
 
 target 'ReactiveSwiftPOC' do
