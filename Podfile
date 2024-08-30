@@ -16,6 +16,7 @@ post_install do |installer|
   end
  end
 end
+end
 
 target 'ReactiveSwiftPOCTests' do
     shared_pods
@@ -23,5 +24,4 @@ end
 
 target 'ReactiveSwiftPOCUITests' do
     shared_pods
-end
 end
